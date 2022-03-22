@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>{{.title}} | 刺客网盘</title>
+
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="/static/css/animate.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+    <style>
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+
+<!-- 提示框 开始-->
+<div class="modal fade text-center" id="myModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="alert modal-dialog modal-sm" role="document" id="message_content">
+    </div>
+</div>
+<!-- 提示框 结束-->
+
+<body class="gray-bg">
+{{/* 内容部分 */}}
+{{block "content" .}}
+
+{{end}}
+
+<!-- Mainly scripts -->
+<script src="/static/js/jquery-3.1.1.min.js"></script>
+<!--<script src="/static/js/popper.min.js"></script>-->
+<script src="/static/js/bootstrap.js"></script>
+<script src="/static/myjs/util.js"></script>
+
+{{/* JS 部分 */}}
+{{block "script" .}}
+
+{{end}}
+</body>
+</html>

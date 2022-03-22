@@ -1,0 +1,72 @@
+{{define "content"}}
+<div class="middle-box text-center loginscreen   animated fadeInDown">
+  <div>
+    <h3>注册</h3>
+    <form class="m-t" role="form" action="#" method="post" id="register" onsubmit="return false;">
+      <div class="form-group">
+        <input type="text" class="form-control" placeholder="用户名" required="" name="username" id="username">
+      </div>
+      <div class="form-group">
+        <input type="password" class="form-control" placeholder="密码" required="" name="password" id="password" >
+      </div>
+      <div class="form-group">
+        <input type="password" class="form-control" placeholder="密码确认" required="" name="password_verify" id="password_verify">
+      </div>
+<!--      <div class="form-group">-->
+<!--        <div class="checkbox i-checks"><label> <input type="checkbox"><i></i> Agree the terms and policy </label></div>-->
+<!--      </div>-->
+
+      <button type="submit" class="btn btn-primary block full-width m-b">注册</button>
+
+      <p class="text-muted text-center"><small>已有账户?</small></p>
+      <a class="btn btn-sm btn-white btn-block" href="/user/login">登录</a>
+    </form>
+    <p class="m-t"> <small>Test network disk.</small> </p>
+  </div>
+</div>
+{{end}}
+
+{{define "script"}}
+<script type="module">
+
+  import user from "/static/myjs/user.js"
+
+  $(document).ready(function(){
+
+    $("#register").submit(function (){
+
+      var username = $("#username").val();
+      var password = $("#password").val();
+      var password_verify = $("#password_verify").val();
+
+      if (username.length < 5) {
+        showMessage("用户名长度不能小于5位");
+        return false
+      }
+      if (password.length < 5) {
+        showMessage("密码长度不能小于5位");
+        return false
+      }
+      if (password != password_verify) {
+        showMessage("两次输入密码不一致");
+        return false
+      }
+
+      userRegister(username, password, password_verify)
+    })
+  });
+
+  function userRegister(username, password, password_verify) {
+    user.UserRegister(username, password, password_verify).then(function (res){
+      if (res.code == 10000) {
+        showMessage(res.message, 'success', res.data.location);
+
+      } else {
+        showMessage(res.message)
+      }
+    });
+  }
+</script>
+
+
+{{end}}

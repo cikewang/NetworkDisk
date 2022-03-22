@@ -1,0 +1,43 @@
+{{define "content"}}
+<div class="wrapper wrapper-content animated fadeInRight">
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <h5>上传文件</h5>
+        </div>
+        <div class="ibox-content">
+          <form method="POST" enctype=multipart/form-data>
+            <input type='file' name="file">
+            <button type="button" id="uploadSingleFile" class="btn btn-w-m btn-primary">上传</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <h5>上传文件夹</h5>
+        </div>
+        <div class="ibox-content">
+          <form method="POST" enctype=multipart/form-data>
+            <input type='file' name="file" webkitdirectory >
+            <button type="button" class="btn btn-w-m btn-primary">上传</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}
+
+{{define "script"}}
+<script type="module">
+  $(document).ready(function (){
+
+    $("#uploadSingleFile").click(function (){
+      alert(1234);
+    });
+  });
+</script>
+{{end}}

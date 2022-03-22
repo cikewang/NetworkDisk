@@ -1,0 +1,83 @@
+{{define "content"}}
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-5 m-b-xs">
+                            <!--                                    <div class="btn-group">-->
+                            <!--                                        <button data-toggle="dropdown" class="fa fa-upload btn btn-primary dropdown-toggle">&nbsp;&nbsp;上传&nbsp;&nbsp;</button>-->
+                            <!--                                        <ul class="dropdown-menu">-->
+                            <!--                                            <li><a class="dropdown-item" href="#">上传文件</a></li>-->
+                            <!--                                            <li><a class="dropdown-item" href="#" class="font-bold">上传文件夹</a></li>-->
+                            <!--                                        </ul>-->
+                            <!--                                    </div>-->
+                            <a class="btn btn-primary " type="button" href="/disk/upload"><i class="fa fa-upload"></i>&nbsp;&nbsp;<span class="bold">上传</span></a>
+                        </div>
+                        <div class="col-sm-4 m-b-xs">
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="input-group"><input placeholder="搜索我的文件" type="text" class="form-control form-control-sm"> <span class="input-group-append"> <button type="button" class="btn btn-sm btn-primary">搜索
+                                    </button> </span></div>
+
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+
+                                <th></th>
+                                <th>文件名 </th>
+                                <th>修改时间 </th>
+                                <th>大小</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td><input type="checkbox"  checked class="i-checks" name="input[]"></td>
+                                <td>Project<small>This is example of project</small></td>
+                                <td><span class="pie">0.52/1.561</span></td>
+                                <td>20%</td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="i-checks" name="input[]"></td>
+                                <td>Alpha project</td>
+                                <td><span class="pie">6,9</span></td>
+                                <td>40%</td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="i-checks" name="input[]"></td>
+                                <td>Betha project</td>
+                                <td><span class="pie">3,1</span></td>
+                                <td>75%</td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="i-checks" name="input[]"></td>
+                                <td>Gamma project</td>
+                                <td><span class="pie">4,9</span></td>
+                                <td>18%</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!--                            分页                           -->
+<!--                    <div class="row">-->
+<!--                        <div class="btn-group">-->
+<!--                            <button type="button" class="btn btn-white"><i class="fa fa-chevron-left"></i></button>-->
+<!--                            <button class="btn btn-white">1</button>-->
+<!--                            <button class="btn btn-white  active">2</button>-->
+<!--                            <button class="btn btn-white">3</button>-->
+<!--                            <button class="btn btn-white">4</button>-->
+<!--                            <button type="button" class="btn btn-white"><i class="fa fa-chevron-right"></i> </button>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{{end}}

@@ -1,0 +1,64 @@
+{{define "content"}}
+<div class="middle-box text-center loginscreen animated fadeInDown">
+    <div>
+        <h2>用户登录</h2>
+        <form action="/user/doLogin" class="m-t" role="form" onsubmit="return false;" >
+            <div class="form-group">
+                <input class="form-control" placeholder="用户名" required="" type="text" name="username" id="username">
+            </div>
+            <div class="form-group">
+                <input class="form-control" placeholder="密码" required="" type="password" id="password">
+            </div>
+            <button class="btn btn-primary block full-width m-b" type="button" id="login">登录</button>
+            <a href="#"><small>忘记密码?</small></a>
+            <p class="text-muted text-center"><small>还没有账户?</small></p>
+            <a class="btn btn-sm btn-white btn-block" href="/user/register">创建账户</a>
+        </form>
+        <p class="m-t"><small>Test network disk.</small></p>
+    </div>
+</div>
+{{end}}
+
+{{define "script"}}
+<script type="module">
+
+    import user from "/static/myjs/user.js"
+
+    $(document).ready(function(){
+        // 点击登录事件
+        $("#login").click(function (){
+            UserLogin()
+        })
+    });
+
+    // 触发回车键事件
+    $(document).keyup(function(event){
+        if(event.keyCode ==13){
+            UserLogin()
+        }
+    });
+
+    function UserLogin() {
+        var username = $("#username").val();
+        var password = $("#password").val();
+
+        if (username.length < 5) {
+            showMessage("用户名长度不能小于5位");
+            return false
+        }
+        if (password.length < 5) {
+            showMessage("密码长度不能小于5位");
+            return false
+        }
+
+        user.UserLogin(username, password).then(function (res){
+            if (res.code == 10000) {
+                localStorage.setItem("token", res.data.token)
+                showMessage(res.message, 'success', res.data.location);
+            } else {
+                showMessage(res.message)
+            }
+        });
+    }
+</script>
+{{end}}
