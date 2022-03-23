@@ -1,5 +1,5 @@
 
-const HTTP_REQUEST_URL = "http://localhost:8081";
+const HTTP_REQUEST_URL = "http://pan.cikewang.com";
 const TOKEN = localStorage.getItem("token")
 
 function baseRequest(url, method, data)
