@@ -2,6 +2,7 @@ package router
 
 import (
 	"NetworkDisk/controller"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/multitemplate"
 	"github.com/gin-gonic/gin"
 	"path/filepath"
@@ -9,6 +10,8 @@ import (
 
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
+	// CORS
+	r.Use(cors.Default())
 	// 引入 gin 框架模板文件
 	//r.LoadHTMLGlob("view/**/*")
 	r.HTMLRender = loadTemplates("./view")
