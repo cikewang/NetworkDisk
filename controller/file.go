@@ -1,64 +1,98 @@
 package controller
 
 import (
+	"NetworkDisk/library"
+	"NetworkDisk/model"
 	"github.com/gin-gonic/gin"
-	"log"
+	"net/http"
+	"path"
+	"strconv"
+	"strings"
 )
 
-func UploadHandler(c *gin.Context) {
-	// 接收文件流及存储到本地目录
-	// 单文件
-	file, _ := c.FormFile("file")
-	log.Println(file.Filename)
+// UploadFileHandler 上传单个文件
+func UploadFileHandler(c *gin.Context) {
 
-	dst := "./" + file.Filename
+	token, bool := GetToken(c)
+
+	if !bool {
+		c.JSON(http.StatusOK, library.RespMessage(10001,"权限认证失败", ""))
+		return
+	}
+
+	// 接收文件并保存
+	file, err := c.FormFile("file")
+	if err != nil {
+		c.JSON(http.StatusOK, library.RespMessage(10001,"文件上传失败，请重试", ""))
+		return
+	}
+
+	parentId, _ := strconv.Atoi(c.DefaultPostForm("parentId", "0"))
+
+	// 文件路径
+	filePath := "./upload/" + file.Filename
 	// 上传文件至指定的完整文件路径
-	c.SaveUploadedFile(file, dst)
+	_, err = model.SaveUploadedFile(file, filePath, token.UserId, parentId)
+	if err != nil {
+		c.JSON(http.StatusOK, library.RespMessage(10002,"文件保存失败，请重试", ""))
+		return
+	}
 
+	data := &library.Redirect{
+		Location: "/disk/home?parentId="+strconv.Itoa(parentId),
+	}
+	c.JSON(http.StatusOK, library.RespMessage(10000,"上传成功", data))
+}
 
+// UploadFilesHandler 上传目录文件
+func UploadFilesHandler(c *gin.Context) {
 
-	//defer file.Close()
-	//
-	//fileMeta := meta.FileMeta{
-	//	FileName: head.Filename,
-	//	FilePath: "./upload/"+head.Filename,
-	//	UploadTime: time.Now().Format("2006-01-02 15:04:05"),
-	//
-	//}
-	//// 创建本地目录
-	//newFile, err := os.Create(fileMeta.FilePath)
-	//if err != nil {
-	//	fmt.Println("Failed to create file, err: %s\n", err.Error())
-	//	return
-	//}
-	//defer newFile.Close()
-	//
-	//// 保存到本地
-	//fileMeta.FileSize, err = io.Copy(newFile, file)
-	//if err != nil {
-	//	fmt.Println("Failed to save data into file, err :%s \n", err.Error())
-	//	return
-	//}
-	//// seek 设置文件偏移量
-	//newFile.Seek(0, 0)
-	//fileMeta.FileSha1 = util.FileSha1(newFile)
-	//// meta.UpdateFileMeta(fileMeta)
-	//
-	//ossPath := string("oss/"+fileMeta.FileSha1)
-	//err = oss.Bucket().PutObjectFromFile(ossPath, fileMeta.FilePath)
-	//if err != nil {
-	//	fmt.Println(err.Error())
-	//	w.Write([]byte("OSS 文件上传失败"))
-	//	return
-	//}
-	//fileMeta.FilePath = ossPath
-	//
-	//// 信息保存到数据库中
-	//_ = meta.UpdateFileMetaDB(fileMeta)
-	//status := database.UserFileUploadFinished(1, fileMeta.FileSha1, fileMeta.FileName, fileMeta.FileSize)
-	//if status {
-	//	http.Redirect(w, r, "/file/upload/suc", http.StatusFound)
-	//} else {
-	//	w.Write([]byte("更新失败"))
-	//}
+	token, bool := GetToken(c)
+	if !bool {
+		c.JSON(http.StatusOK, library.RespMessage(10001,"权限认证失败", ""))
+		return
+	}
+
+	parentId, _ := strconv.Atoi(c.DefaultPostForm("parentId", "0"))
+
+	form, _ := c.MultipartForm()
+	files := form.File["files"]
+	fileLength := len(files)
+	if  fileLength <= 0 {
+		c.JSON(http.StatusOK, library.RespMessage(10002,"上传文件不能为空", ""))
+		return
+	}
+	// 获取文件目录
+	dirFile := files[0]
+	dir, _ := path.Split(dirFile.Filename)
+	dir = strings.Trim(dir, "/")
+	// 添加目录
+	currentParentId, status := model.AddDirectory(dir, token.UserId, parentId)
+	if !status {
+		c.JSON(http.StatusOK, library.RespMessage(10003,"上传失败，请重试", ""))
+		return
+	}
+
+	number := 0
+	for _, file := range files {
+		_, fileName := path.Split(file.Filename)
+		// 文件路径
+		filePath := "./upload/" + fileName
+		// 上传文件至指定的完整文件路径
+		_, err := model.SaveUploadedFile(file, filePath, token.UserId, int(currentParentId))
+		if err == nil {
+			number++
+		}
+	}
+
+	if number == 0 {
+		c.JSON(http.StatusOK, library.RespMessage(10002,"文件保存失败，请重试", ""))
+		return
+	}
+
+	data := &library.Redirect{
+		Location: "/disk/home?parentId=" + strconv.Itoa(parentId),
+	}
+	c.JSON(http.StatusOK, library.RespMessage(10000,"上传成功", data))
+
 }

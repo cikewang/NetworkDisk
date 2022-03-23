@@ -39,19 +39,19 @@ func UserDoRegisterHandler(c *gin.Context) {
 
 	// 用户名长度不能小于6位
 	if len(username) < 5 {
-		c.JSON(http.StatusForbidden, library.RespMessage(10001,"用户名长度不能小于5位", ""))
+		c.JSON(http.StatusOK, library.RespMessage(10001,"用户名长度不能小于5位", ""))
 		return
 	}
 
 	// 密码长度不能小于6位
 	if len(password) < 5 {
-		c.JSON(http.StatusForbidden, library.RespMessage(10002,"密码长度不能小于5位", ""))
+		c.JSON(http.StatusOK, library.RespMessage(10002,"密码长度不能小于5位", ""))
 		return
 	}
 
 	// 两次密码输入是否一致
 	if password != password_verify {
-		c.JSON(http.StatusForbidden, library.RespMessage(10003,"两次密码输入不一致", ""))
+		c.JSON(http.StatusOK, library.RespMessage(10003,"两次密码输入不一致", ""))
 		return
 	}
 
@@ -71,7 +71,7 @@ func UserDoRegisterHandler(c *gin.Context) {
 		}
 		c.JSON(http.StatusOK, library.RespMessage(10000,"注册成功，请登录", data))
 	} else {
-		c.JSON(http.StatusForbidden, library.RespMessage(10006,"注册失败", ""))
+		c.JSON(http.StatusOK, library.RespMessage(10006,"注册失败", ""))
 	}
 }
 

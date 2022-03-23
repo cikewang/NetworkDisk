@@ -14,6 +14,8 @@ func SetupRouter() *gin.Engine {
 	r.HTMLRender = loadTemplates("./view")
 	// 引入 static
 	r.Static("/static", "static")
+	r.Static("/upload", "upload")
+
 
 	// 无权限认证
 	// 用户登录页面
@@ -27,8 +29,9 @@ func SetupRouter() *gin.Engine {
 
 	/* 网盘页面 */
 	r.GET("/disk/home", controller.DiskHomeHandler)
-	r.GET("/disk/upload", controller.DiskUploadHandler)
 	r.GET("/disk/recycle", controller.DiskRecycleHandler)
+	// 文件上传页面
+	r.GET("/disk/upload", controller.DiskUploadHandler)
 
 	// 以下接口验证权限
 	// 权限拦截器
@@ -39,7 +42,14 @@ func SetupRouter() *gin.Engine {
 	r.GET("/user/info", controller.UserInfoHandler)
 
 	// 文件管理
-	r.POST("/file/upload", controller.UploadHandler)
+	r.POST("/file/upload", controller.UploadFileHandler)
+	r.POST("/file/uploads", controller.UploadFilesHandler)
+
+
+	// 文件列表
+	r.GET("/disk/list", controller.DiskFileListHandler)
+	// 添加目录
+	r.POST("/disk/add", controller.AddDirectoryHandler)
 
 	return r
 }

@@ -1,5 +1,18 @@
 {{define "content"}}
+<input type="text" id="parentId" value="{{.parentId}}" class="hide">
 <div class="wrapper wrapper-content animated fadeInRight">
+  <div class="row">
+    <div class="col-lg-12 upload_block hide">
+      <div class="ibox ">
+        <div class="ibox-content">
+          <div class="progress">
+            <div class="upload_progress  progress-bar progress-bar-striped progress-bar-animated progress-bar-success" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="row">
     <div class="col-lg-6">
       <div class="ibox ">
@@ -7,8 +20,8 @@
           <h5>上传文件</h5>
         </div>
         <div class="ibox-content">
-          <form method="POST" enctype=multipart/form-data>
-            <input type='file' name="file">
+          <form method="POST" enctype=multipart/form-data id="uploadFile">
+            <input type='file' name="file" id="file">
             <button type="button" id="uploadSingleFile" class="btn btn-w-m btn-primary">上传</button>
           </form>
         </div>
@@ -20,9 +33,9 @@
           <h5>上传文件夹</h5>
         </div>
         <div class="ibox-content">
-          <form method="POST" enctype=multipart/form-data>
-            <input type='file' name="file" webkitdirectory >
-            <button type="button" class="btn btn-w-m btn-primary">上传</button>
+          <form method="POST" enctype=multipart/form-data id="uploadFiles">
+            <input type='file' name="files" id="files" webkitdirectory >
+            <button type="button" id="uploadSingleFiles" class="btn btn-w-m btn-primary">上传</button>
           </form>
         </div>
       </div>
@@ -33,10 +46,69 @@
 
 {{define "script"}}
 <script type="module">
-  $(document).ready(function (){
 
+  function uploadFile(url, formData) {
+    const TOKEN = localStorage.getItem("token")
+
+    $.ajax({
+      url : url,
+      type : 'POST',
+      data : formData,   //不处理表单数据
+      processData : false,   //不处理contentType
+      contentType : false,
+      beforeSend:function(request){
+        if (TOKEN) {
+          request.setRequestHeader("Authorization", TOKEN);
+        }
+      },
+      success : function(res) {
+        if (res.code == 10000) {
+          showMessage(res.message, "success", res.data.location)
+        } else {
+          showMessage(res.message)
+        }
+      },
+      error : function(responseStr) {
+        showMessage(responseStr)
+      },
+      xhr : function(e){
+        var xhr = $.ajaxSettings.xhr();
+        if (xhr.upload) {
+          xhr.upload.onprogress = function(e) {
+            if (e.lengthComputable) {
+              var percent = Math.floor( e.loaded / e.total * 100);
+              console.log(percent);
+              $(".upload_block").show();
+              // 计算百分比
+              $(".upload_progress").css("width", percent+"%");
+              if (percent >= 100) {
+                setTimeout(function(){
+                  $(".upload_block").hide()
+                }, 1000);
+              }
+            }
+          };
+        }
+        return xhr;
+      }
+
+    });
+  }
+  $(document).ready(function (){
+    var parentId = $("#parentId").val();
+
+    // 上传单个文件
     $("#uploadSingleFile").click(function (){
-      alert(1234);
+      var formData = new FormData($('#uploadFile')[0]);
+      formData.append("parentId", parentId)
+      uploadFile('/file/upload', formData);
+    });
+
+    // 上传文件夹
+    $("#uploadSingleFiles").click(function (){
+      var formData = new FormData($('#uploadFiles')[0]);
+      formData.append("parentId", parentId)
+      uploadFile('/file/uploads', formData);
     });
   });
 </script>

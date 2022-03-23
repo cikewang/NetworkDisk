@@ -45,8 +45,8 @@ func Authorize() gin.HandlerFunc {
 		}
 
 		// TODO token续签
-		c.Set("claims", claims)
 
+		c.Set("claims", claims)
 		c.Next()
 	}
 }
@@ -92,8 +92,8 @@ func ParseToken(token string) (*MyClaims, error) {
 func GetToken(c *gin.Context) (*MyClaims, bool) {
 	claims, bool := c.Get("claims")
 	if !bool {
-		return  nil, false
 		log.Println("claims 不存在")
+		return  nil, false
 	}
 	return claims.(*MyClaims), bool
 }

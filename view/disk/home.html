@@ -1,4 +1,6 @@
 {{define "content"}}
+<input type="text" id="category" value="{{.category}}" class="hide">
+<input type="text" id="parentId" value="{{.parentId}}" class="hide">
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="row">
         <div class="col-lg-12">
@@ -6,14 +8,13 @@
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-sm-5 m-b-xs">
-                            <!--                                    <div class="btn-group">-->
-                            <!--                                        <button data-toggle="dropdown" class="fa fa-upload btn btn-primary dropdown-toggle">&nbsp;&nbsp;上传&nbsp;&nbsp;</button>-->
-                            <!--                                        <ul class="dropdown-menu">-->
-                            <!--                                            <li><a class="dropdown-item" href="#">上传文件</a></li>-->
-                            <!--                                            <li><a class="dropdown-item" href="#" class="font-bold">上传文件夹</a></li>-->
-                            <!--                                        </ul>-->
-                            <!--                                    </div>-->
-                            <a class="btn btn-primary " type="button" href="/disk/upload"><i class="fa fa-upload"></i>&nbsp;&nbsp;<span class="bold">上传</span></a>
+                            <a class="btn btn-primary " type="button" href="javascript:void(0);" id="uploadPage"><i class="fa fa-upload"></i>&nbsp;&nbsp;<span class="bold">上传</span></a>
+
+                            <div data-toggle="buttons-checkbox" class="btn-group">
+                                <button class="btn btn-info active showDirectory" type="button"><i class="fa fa-plus-square-o"></i> 新建文件夹</button>
+<!--                                <button class="btn btn-info active" type="button" aria-pressed="true"><i class="fa fa-underline"></i> Underline</button>-->
+<!--                                <button class="btn btn-info" type="button" aria-pressed="false"><i class="fa fa-italic"></i> Italic</button>-->
+                            </div>
                         </div>
                         <div class="col-sm-4 m-b-xs">
                         </div>
@@ -24,41 +25,35 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-striped">
+                        <table class="table table-hover">
                             <thead>
                             <tr>
-
                                 <th></th>
                                 <th>文件名 </th>
                                 <th>修改时间 </th>
                                 <th>大小</th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <tr>
-                                <td><input type="checkbox"  checked class="i-checks" name="input[]"></td>
-                                <td>Project<small>This is example of project</small></td>
-                                <td><span class="pie">0.52/1.561</span></td>
-                                <td>20%</td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" class="i-checks" name="input[]"></td>
-                                <td>Alpha project</td>
-                                <td><span class="pie">6,9</span></td>
-                                <td>40%</td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" class="i-checks" name="input[]"></td>
-                                <td>Betha project</td>
-                                <td><span class="pie">3,1</span></td>
-                                <td>75%</td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" class="i-checks" name="input[]"></td>
-                                <td>Gamma project</td>
-                                <td><span class="pie">4,9</span></td>
-                                <td>18%</td>
-                            </tr>
+                            <tbody class="addDirectoryDiv hide">
+                                <tr>
+                                    <td>&nbsp;</td>
+                                    <td colspan="3">
+                                        <input type="text"  name="fileName" id="fileName" value="">
+                                        <button class="btn btn-primary btn-check btn-xs " type="button" id="addDirectory">
+                                            <i class="fa fa-check"></i>
+                                        </button>
+
+                                        <button class="btn btn-primary btn-check btn-xs" type="button" id="closeDirectory">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+
+                            <tbody id="fileList">
+                                <tr>
+                                    <td colspan="4">空</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -80,4 +75,90 @@
 
     </div>
 </div>
+{{end}}
+
+{{define "script"}}
+<script type="module">
+
+    import disk from "/static/myjs/disk.js"
+
+    function diskFileList(category = 0, parentId = 0, path = '') {
+        $("#parentId").val(parentId)
+        disk.FileList(category, parentId, path).then(function (res){
+            var html = ""
+            if (res.code == 10000) {
+                if (res.data != null && res.data.length > 0) {
+                    res.data.forEach(function (obj){
+                        html += "<tr>"
+                        html += "<td><input type='checkbox' class='i-checks' name='input[]'></td>"
+                        html += "<td><a href='javascript:void(0);' class='fileObj' filePath='"+obj.filePath+"' pid='"+obj.id+"' category='"+obj.category+"' fileType='"+obj.fileType+"'>"+obj.fileName+"</a></td>"
+                        html += "<td><span class='pie'>"+obj.updateTime+"</span></td>"
+                        html += "<td>"+obj.fileSize+"</td>"
+                        html += "</tr>"
+                    });
+                }
+                $("#fileList").html(html)
+            } else {
+                showMessage(res.message)
+            }
+        });
+    }
+
+    // 添加目录
+    function addDirectory(directory, category = 0, parentId = 0) {
+        disk.AddDirectory(directory, parentId).then(function (res) {
+            if (res.code == 10000) {
+                showMessage(res.message, "success")
+                diskFileList(category, parentId)
+                $(".addDirectoryDiv").hide()
+            } else {
+                showMessage(res.message)
+            }
+        });
+    }
+
+    $(document).ready(function (){
+
+        var parentId = $("#parentId").val();
+        var category = $("#category").val();
+        diskFileList(category, parentId);
+
+        $(".showDirectory").click(function (){
+            $(".addDirectoryDiv").show()
+        });
+
+        $("#closeDirectory").click(function (){
+            $(".addDirectoryDiv").hide()
+        });
+
+        $("#addDirectory").click(function (){
+            var fileName = $("#fileName").val()
+            var parentId = parseInt($("#parentId").val());
+            var category = parseInt($("#category").val());
+            if (fileName == "") {
+                showMessage("文件名不能为空")
+            } else {
+                addDirectory(fileName, category, parentId)
+            }
+        });
+
+        $("#fileList").on("click",".fileObj", function () {
+            var path = $(this).attr("path")
+            var parentId = $(this).attr("pid")
+            var fileType = $(this).attr("fileType")
+            var filePath = $(this).attr("filePath")
+            var category = $("#category").val()
+            if (fileType == 'dir') {
+                diskFileList(category, parentId, path);
+            } else {
+                window.open("/"+filePath);
+            }
+        })
+
+        $("#uploadPage").click(function () {
+            var parentId = $("#parentId").val()
+            location.href = "/disk/upload?parentId="+parentId;
+        })
+    });
+</script>
 {{end}}
