@@ -13,7 +13,7 @@ var (
 )
 
 func init() {
-	db, _ = sql.Open("mysql", cfg.User+":"+cfg.Pass+"@tcp("+cfg.Host+")/"+cfg.DBName+"?charset="+cfg.Charset)
+	db, _ = sql.Open("mysql", cfg.User+":"+cfg.Pass+"@tcp("+cfg.Host+":"+cfg.Port+")/"+cfg.DBName+"?charset="+cfg.Charset)
 	db.SetMaxOpenConns(100)
 	err := db.Ping()
 	if err != nil {
