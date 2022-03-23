@@ -5,10 +5,14 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/multitemplate"
 	"github.com/gin-gonic/gin"
+	"io/ioutil"
 	"path/filepath"
 )
 
 func SetupRouter() *gin.Engine {
+
+	gin.SetMode(gin.ReleaseMode)
+	gin.DefaultWriter = ioutil.Discard
 	r := gin.Default()
 	// CORS
 	r.Use(cors.Default())

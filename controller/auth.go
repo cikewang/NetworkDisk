@@ -41,7 +41,7 @@ func Authorize() gin.HandlerFunc {
 			c.JSON(http.StatusOK, library.RespMessage(20002,message, data))
 			return
 		} else {
-			log.Println("token 正确")
+			// log.Println("token 正确")
 		}
 
 		// TODO token续签
