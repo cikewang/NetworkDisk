@@ -18,6 +18,7 @@ func SetupRouter() *gin.Engine {
 
 
 	// 无权限认证
+	r.GET("/", controller.DiskHomeHandler)
 	// 用户登录页面
 	r.GET("/user/login", controller.UserLoginHandler)
 	// 用户登录
