@@ -89,9 +89,10 @@
             if (res.code == 10000) {
                 if (res.data != null && res.data.length > 0) {
                     res.data.forEach(function (obj){
+                        var icon = getIcon(obj.fileType, obj.category);
                         html += "<tr>"
                         html += "<td><input type='checkbox' class='i-checks' name='input[]'></td>"
-                        html += "<td><a href='javascript:void(0);' class='fileObj' filePath='"+obj.filePath+"' pid='"+obj.id+"' category='"+obj.category+"' fileType='"+obj.fileType+"'>"+obj.fileName+"</a></td>"
+                        html += "<td><img src='"+icon+"' style='width: 24px;' > <a href='javascript:void(0);' class='fileObj' filePath='"+obj.filePath+"' pid='"+obj.id+"' category='"+obj.category+"' fileType='"+obj.fileType+"'>"+obj.fileName+"</a></td>"
                         html += "<td><span class='pie'>"+obj.updateTime+"</span></td>"
                         html += "<td>"+obj.fileSize+"</td>"
                         html += "</tr>"
