@@ -36,6 +36,8 @@ function getIcon(fileType = '', category = 0) {
                 img += 'word.png';
             } else if(fileType == 'ppt' || fileType == 'pptx') {
                 img += 'ppt.png';
+            } else if(fileType == 'xls' || fileType == 'xls') {
+                img += 'excel.png';
             } else {
                 img += 'txt.png';
             }
