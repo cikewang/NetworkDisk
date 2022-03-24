@@ -127,6 +127,7 @@ func GetFileCategory(fileName string) int {
 	fileType["pcx"] = 1
 	fileType["tif"] = 1
 	fileType["gif"] = 1
+	fileType["jpg"] = 1
 	fileType["jpeg"] = 1
 	fileType["tga"] = 1
 	fileType["exif"] = 1
